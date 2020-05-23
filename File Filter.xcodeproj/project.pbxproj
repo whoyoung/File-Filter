@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -11,6 +11,7 @@
 		6F4586D124792B8400C58BD0 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F4586D024792B8400C58BD0 /* ViewController.swift */; };
 		6F4586D324792B8A00C58BD0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6F4586D224792B8A00C58BD0 /* Assets.xcassets */; };
 		6F4586D624792B8A00C58BD0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6F4586D424792B8A00C58BD0 /* Main.storyboard */; };
+		6FDE5E5724796DEE00545A48 /* FileOptionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FDE5E5624796DEE00545A48 /* FileOptionsView.swift */; };
 		D997B30D283DC573718B91D5 /* Pods_File_Filter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 46B3F3FBFF4DB755303526BB /* Pods_File_Filter.framework */; };
 /* End PBXBuildFile section */
 
@@ -23,6 +24,7 @@
 		6F4586D524792B8A00C58BD0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		6F4586D724792B8A00C58BD0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6F4586D824792B8A00C58BD0 /* File_Filter.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = File_Filter.entitlements; sourceTree = "<group>"; };
+		6FDE5E5624796DEE00545A48 /* FileOptionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileOptionsView.swift; sourceTree = "<group>"; };
 		720C93A167EF976B9F572EAD /* Pods-File Filter.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-File Filter.debug.xcconfig"; path = "Target Support Files/Pods-File Filter/Pods-File Filter.debug.xcconfig"; sourceTree = "<group>"; };
 		E4FE1D9C211532DC40F31373 /* Pods-File Filter.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-File Filter.release.xcconfig"; path = "Target Support Files/Pods-File Filter/Pods-File Filter.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -62,6 +64,7 @@
 			children = (
 				6F4586CE24792B8400C58BD0 /* AppDelegate.swift */,
 				6F4586D024792B8400C58BD0 /* ViewController.swift */,
+				6FDE5E5624796DEE00545A48 /* FileOptionsView.swift */,
 				6F4586D224792B8A00C58BD0 /* Assets.xcassets */,
 				6F4586D424792B8A00C58BD0 /* Main.storyboard */,
 				6F4586D724792B8A00C58BD0 /* Info.plist */,
@@ -84,7 +87,6 @@
 				720C93A167EF976B9F572EAD /* Pods-File Filter.debug.xcconfig */,
 				E4FE1D9C211532DC40F31373 /* Pods-File Filter.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -202,6 +204,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6FDE5E5724796DEE00545A48 /* FileOptionsView.swift in Sources */,
 				6F4586D124792B8400C58BD0 /* ViewController.swift in Sources */,
 				6F4586CF24792B8400C58BD0 /* AppDelegate.swift in Sources */,
 			);
