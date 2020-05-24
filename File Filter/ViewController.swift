@@ -14,15 +14,20 @@ class ViewController: NSViewController {
     private let destPathLabel = NSTextField()
     private let specificFolderLabel = NSTextField()
     private let fileTypeLabel = NSTextField()
+    private let minSizeLabel = NSTextField()
+    private let maxSizeLabel = NSTextField()
     private let KSpecificFolderNamesKey = "specificFolderNames"
     private let KFileTypeKey = "fileTypeKey"
-    
+    private let KSizeUnitKey = "sizeUnitKey"
+
     private var folderDatas: [String] = []
     private var typeDatas: [String] = []
+    private var unitDatas: [String] = []
     
     @IBOutlet weak var folderBox: NSComboBox!
-    
     @IBOutlet weak var typeBox: NSComboBox!
+    @IBOutlet weak var minSizeBox: NSComboBox!
+    @IBOutlet weak var maxSizeBox: NSComboBox!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -112,6 +117,60 @@ class ViewController: NSViewController {
             make.left.equalTo(fileTypeLabel.snp.right).offset(15)
             make.right.equalTo(destBtn)
         }
+        
+        let minSize = NSTextField(labelWithString: "minimum file size:")
+        minSize.backgroundColor = NSColor.clear
+        view.addSubview(minSize)
+        minSize.snp.makeConstraints { (make) in
+            make.top.equalTo(fileType.snp.bottom).offset(20)
+            make.left.height.equalTo(destName)
+        }
+        
+        minSizeLabel.placeholderString = "input minimus file size, default 0"
+        minSizeLabel.lineBreakMode = .byTruncatingTail
+        view.addSubview(minSizeLabel)
+        minSizeLabel.snp.makeConstraints { (make) in
+            make.top.height.equalTo(minSize)
+            make.left.equalTo(minSize.snp.right).offset(15)
+        }
+        
+        minSizeBox.dataSource = self
+        minSizeBox.placeholderString = "select unit"
+        view.addSubview(minSizeBox)
+        minSizeBox.snp.makeConstraints { (make) in
+            make.centerY.equalTo(minSize)
+            make.height.equalTo(20)
+            make.width.equalTo(150)
+            make.left.equalTo(minSizeLabel.snp.right).offset(15)
+            make.right.equalTo(destBtn)
+        }
+        
+        let maxSize = NSTextField(labelWithString: "maximum file size:")
+        maxSize.backgroundColor = NSColor.clear
+        view.addSubview(maxSize)
+        maxSize.snp.makeConstraints { (make) in
+            make.top.equalTo(minSize.snp.bottom).offset(20)
+            make.left.height.equalTo(destName)
+        }
+        
+        maxSizeLabel.placeholderString = "input maximum file size, should >= minSize"
+        maxSizeLabel.lineBreakMode = .byTruncatingTail
+        view.addSubview(maxSizeLabel)
+        maxSizeLabel.snp.makeConstraints { (make) in
+            make.top.height.equalTo(maxSize)
+            make.left.equalTo(maxSize.snp.right).offset(15)
+        }
+        
+        maxSizeBox.dataSource = self
+        maxSizeBox.placeholderString = "select unit"
+        view.addSubview(maxSizeBox)
+        maxSizeBox.snp.makeConstraints { (make) in
+            make.centerY.equalTo(maxSize)
+            make.height.equalTo(20)
+            make.width.equalTo(150)
+            make.left.equalTo(maxSizeLabel.snp.right).offset(15)
+            make.right.equalTo(destBtn)
+        }
     }
     
     @objc private func selectFolder() {
@@ -131,6 +190,8 @@ extension ViewController: NSComboBoxDelegate, NSComboBoxDataSource {
             return folderDatas.count
         } else if comboBox == typeBox {
             return typeDatas.count
+        } else if comboBox == minSizeBox || comboBox == maxSizeBox {
+            return unitDatas.count
         }
         return 0
     }
@@ -140,6 +201,8 @@ extension ViewController: NSComboBoxDelegate, NSComboBoxDataSource {
             return folderDatas[index]
         } else if comboBox == typeBox {
             return typeDatas[index]
+        } else if comboBox == minSizeBox || comboBox == maxSizeBox {
+            return unitDatas[index]
         }
         return ""
     }
@@ -196,6 +259,26 @@ extension ViewController: NSComboBoxDelegate, NSComboBoxDataSource {
             let strArray = (string as NSString).components(separatedBy: ",")
             typeDatas = strArray
         }
+        
+        if let string = UserDefaults.standard.object(forKey: KSizeUnitKey) as? String {
+            let strArray = (string as NSString).components(separatedBy: ",")
+            unitDatas = strArray
+        } else {
+            let string = "B,KB,M"
+            UserDefaults.standard.set(string, forKey: KSizeUnitKey)
+            let strArray = (string as NSString).components(separatedBy: ",")
+            unitDatas = strArray
+        }
     }
 }
 
+//extension ViewController: NSTextFieldDelegate {
+//    func control(_ control: NSControl, isValidObject obj: Any?) -> Bool {
+//        if let value = obj as? String {
+//            let regex = "([1-9]*.?)|(0.[0-9]+)"
+//            let predicate = NSPredicate(format: "SELF MATCHES \(regex)", argumentArray:nil)
+//            return predicate.evaluate(with: value)
+//        }
+//        return false
+//    }
+//}
