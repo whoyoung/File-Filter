@@ -171,6 +171,14 @@ class ViewController: NSViewController {
             make.left.equalTo(maxSizeLabel.snp.right).offset(15)
             make.right.equalTo(destBtn)
         }
+        
+        let startBtn = NSButton(title: "start", target: self, action: #selector(startFilt))
+        view.addSubview(startBtn)
+        startBtn.snp.makeConstraints { (make) in
+            make.top.equalTo(maxSizeBox.snp.bottom).offset(20)
+            make.height.width.equalTo(destBtn)
+            make.right.equalTo(-20)
+        }
     }
     
     @objc private func selectFolder() {
@@ -182,6 +190,9 @@ class ViewController: NSViewController {
         }
     }
     
+    @objc private func startFilt() {
+        
+    }
 }
 
 extension ViewController: NSComboBoxDelegate, NSComboBoxDataSource {
