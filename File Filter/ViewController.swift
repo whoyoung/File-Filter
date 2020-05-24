@@ -13,26 +13,25 @@ class ViewController: NSViewController {
     
     private let destPathLabel = NSTextField()
     private let specificFolderLabel = NSTextField()
+    private let fileTypeLabel = NSTextField()
+    private let KSpecificFolderNamesKey = "specificFolderNames"
+    private let KFileTypeKey = "fileTypeKey"
     
-    @IBOutlet weak var specificFolderBtn: NSButton!
+    private var folderDatas: [String] = []
+    private var typeDatas: [String] = []
     
-    @IBAction func folderBtnClicked(_ sender: NSButton) {
-        debugPrint("current state = \(sender.state)")
-    }
+    @IBOutlet weak var folderBox: NSComboBox!
+    
+    @IBOutlet weak var typeBox: NSComboBox!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupDatas()
         setupSubviews()
-    }
-    
-    override var representedObject: Any? {
-        didSet {
-        // Update the view, if already loaded.
-        }
     }
 
     private func setupSubviews() {
-        let destName = NSTextField(string: "Select destination folder:")
+        let destName = NSTextField(labelWithString: "Select destination folder:")
         destName.isBordered = false
         destName.isEditable = false
         destName.backgroundColor = NSColor.clear
@@ -58,9 +57,7 @@ class ViewController: NSViewController {
             make.right.equalTo(-20)
         }
         
-        let specificFolder = NSTextField(string: "Specific folder names:")
-        specificFolder.isBordered = false
-        specificFolder.isEditable = false
+        let specificFolder = NSTextField(labelWithString: "Specific folder names:")
         specificFolder.backgroundColor = NSColor.clear
         view.addSubview(specificFolder)
         specificFolder.snp.makeConstraints { (make) in
@@ -76,10 +73,43 @@ class ViewController: NSViewController {
             make.left.equalTo(specificFolder.snp.right).offset(15)
         }
         
-        specificFolderBtn.snp.makeConstraints { (make) in
+        folderBox.delegate = self
+        folderBox.dataSource = self
+        folderBox.placeholderString = "quick select"
+        view.addSubview(folderBox)
+        folderBox.snp.makeConstraints { (make) in
             make.centerY.equalTo(specificFolder)
-            make.height.width.equalTo(27)
+            make.height.equalTo(20)
+            make.width.equalTo(150)
             make.left.equalTo(specificFolderLabel.snp.right).offset(15)
+            make.right.equalTo(destBtn)
+        }
+        
+        let fileType = NSTextField(labelWithString: "Specific file types:")
+        fileType.backgroundColor = NSColor.clear
+        view.addSubview(fileType)
+        fileType.snp.makeConstraints { (make) in
+            make.top.equalTo(specificFolder.snp.bottom).offset(20)
+            make.left.height.equalTo(destName)
+        }
+        
+        fileTypeLabel.placeholderString = "input or select file types,separated by ','"
+        fileTypeLabel.lineBreakMode = .byTruncatingTail
+        view.addSubview(fileTypeLabel)
+        fileTypeLabel.snp.makeConstraints { (make) in
+            make.top.height.equalTo(fileType)
+            make.left.equalTo(fileType.snp.right).offset(15)
+        }
+        
+        typeBox.delegate = self
+        typeBox.dataSource = self
+        typeBox.placeholderString = "quick select"
+        view.addSubview(typeBox)
+        typeBox.snp.makeConstraints { (make) in
+            make.centerY.equalTo(fileType)
+            make.height.equalTo(20)
+            make.width.equalTo(150)
+            make.left.equalTo(fileTypeLabel.snp.right).offset(15)
             make.right.equalTo(destBtn)
         }
     }
@@ -93,5 +123,79 @@ class ViewController: NSViewController {
         }
     }
     
+}
+
+extension ViewController: NSComboBoxDelegate, NSComboBoxDataSource {
+    func numberOfItems(in comboBox: NSComboBox) -> Int {
+        if comboBox == folderBox {
+            return folderDatas.count
+        } else if comboBox == typeBox {
+            return typeDatas.count
+        }
+        return 0
+    }
+    
+    func comboBox(_ comboBox: NSComboBox, objectValueForItemAt index: Int) -> Any? {
+        if comboBox == folderBox {
+            return folderDatas[index]
+        } else if comboBox == typeBox {
+            return typeDatas[index]
+        }
+        return ""
+    }
+    
+    func comboBoxSelectionDidChange(_ notification: Notification) {
+        if let obj = notification.object as? NSComboBox {
+            var datas: [String] = []
+            if obj == folderBox {
+                datas = folderDatas
+            } else if obj == typeBox {
+                datas = typeDatas
+            }
+            if obj.indexOfSelectedItem < datas.count {
+                var value = ""
+                var label = NSTextField()
+                if obj == folderBox {
+                    value = folderDatas[obj.indexOfSelectedItem]
+                    label = specificFolderLabel
+                } else if obj == typeBox {
+                    value = typeDatas[obj.indexOfSelectedItem]
+                    label = fileTypeLabel
+                }
+                let currentValue = label.stringValue
+                let isExisted = currentValue.contains(value) || currentValue == value
+                if isExisted == true {
+                    return
+                }
+                if currentValue.isEmpty == true {
+                    label.stringValue.append(value)
+                } else {
+                    label.stringValue.append(",\(value)")
+                }
+            }
+        }
+    }
+    
+    func setupDatas() {
+        if let string = UserDefaults.standard.object(forKey: KSpecificFolderNamesKey) as? String {
+            let strArray = (string as NSString).components(separatedBy: ",")
+            folderDatas = strArray
+        } else {
+            let string = "Assets.xcassets,Resources"
+            UserDefaults.standard.set(string, forKey: KSpecificFolderNamesKey)
+            let strArray = (string as NSString).components(separatedBy: ",")
+            folderDatas = strArray
+        }
+        
+        if let string = UserDefaults.standard.object(forKey: KFileTypeKey) as? String {
+            let strArray = (string as NSString).components(separatedBy: ",")
+            typeDatas = strArray
+        } else {
+            let string = "png,jpg,jpeg,zip"
+            UserDefaults.standard.set(string, forKey: KFileTypeKey)
+            let strArray = (string as NSString).components(separatedBy: ",")
+            typeDatas = strArray
+        }
+    }
 }
 
