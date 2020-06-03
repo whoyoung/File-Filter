@@ -1,6 +1,0 @@
-framework module Pods_File_Filter {
-  umbrella header "Pods-File Filter-umbrella.h"
-
-  export *
-  module * { export * }
-}

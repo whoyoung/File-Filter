@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "85CA5DA5E5489F7822EA3D99BBBCE4A0"
-               BuildableName = "Pods_File_Filter.framework"
-               BlueprintName = "Pods-File Filter"
+               BlueprintIdentifier = "08A99B109C8C296D039E21A09ED99AF9"
+               BuildableName = "Pods_FileFilter.framework"
+               BlueprintName = "Pods-FileFilter"
                ReferencedContainer = "container:Pods.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>

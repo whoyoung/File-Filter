@@ -1,6 +1,6 @@
 //
 //  AppDelegate.swift
-//  File Filter
+//  FileFilter
 //
 //  Created by young on 2020/5/23.
 //  Copyright © 2020 young. All rights reserved.

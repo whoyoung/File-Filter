@@ -1,6 +1,6 @@
 //
 //  ViewController.swift
-//  File Filter
+//  FileFilter
 //
 //  Created by young on 2020/5/23.
 //  Copyright © 2020 young. All rights reserved.
@@ -191,7 +191,14 @@ class ViewController: NSViewController {
     }
     
     @objc private func startFilt() {
-        
+        let path = destPathLabel.stringValue
+        let fileM = FileManager.default
+        do {
+            let files:[String] = try fileM.contentsOfDirectory(atPath: path)
+            debugPrint("\(files.joined(separator: ", "))")
+        } catch let error {
+            debugPrint("open \(path) error:\n \(error.localizedDescription)")
+        }
     }
 }
 

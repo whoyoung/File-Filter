@@ -11,6 +11,6 @@
 #endif
 
 
-FOUNDATION_EXPORT double Pods_File_FilterVersionNumber;
-FOUNDATION_EXPORT const unsigned char Pods_File_FilterVersionString[];
+FOUNDATION_EXPORT double Pods_FileFilterVersionNumber;
+FOUNDATION_EXPORT const unsigned char Pods_FileFilterVersionString[];
 
