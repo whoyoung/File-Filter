@@ -754,6 +754,33 @@
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </comboBoxCell>
                             </comboBox>
+                            <scrollView fixedFrame="YES" borderType="none" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bcy-9R-cUN">
+                                <rect key="frame" x="116" y="469" width="240" height="135"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <clipView key="contentView" ambiguous="YES" drawsBackground="NO" copiesOnScroll="NO" id="zKS-m6-Z5u">
+                                    <rect key="frame" x="0.0" y="0.0" width="240" height="135"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <textView ambiguous="YES" importsGraphics="NO" richText="NO" verticallyResizable="YES" spellingCorrection="YES" smartInsertDelete="YES" id="7b6-w1-lzq">
+                                            <rect key="frame" x="0.0" y="0.0" width="240" height="135"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                            <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                            <size key="minSize" width="240" height="135"/>
+                                            <size key="maxSize" width="240" height="10000000"/>
+                                            <color key="insertionPointColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                        </textView>
+                                    </subviews>
+                                </clipView>
+                                <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="IxP-Or-YT3">
+                                    <rect key="frame" x="-100" y="-100" width="240" height="16"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </scroller>
+                                <scroller key="verticalScroller" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="r0L-Ir-qoX">
+                                    <rect key="frame" x="224" y="0.0" width="16" height="135"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </scroller>
+                            </scrollView>
                         </subviews>
                     </view>
                     <connections>
@@ -761,6 +788,8 @@
                         <outlet property="folderBox" destination="vfe-9s-9Z0" id="7TD-bu-b8z"/>
                         <outlet property="maxSizeBox" destination="4a6-2d-g4H" id="CyB-qO-8hL"/>
                         <outlet property="minSizeBox" destination="DoN-9a-dmX" id="9es-zZ-4fD"/>
+                        <outlet property="textView" destination="7b6-w1-lzq" id="efm-qm-Y7D"/>
+                        <outlet property="textViewContainer" destination="bcy-9R-cUN" id="MJe-qs-EFy"/>
                         <outlet property="typeBox" destination="VGx-A3-hbf" id="Nnq-5P-CQ7"/>
                     </connections>
                 </viewController>

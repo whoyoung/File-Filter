@@ -35,8 +35,9 @@ class ViewController: NSViewController {
     @IBOutlet weak var typeBox: NSComboBox!
     @IBOutlet weak var minSizeBox: NSComboBox!
     @IBOutlet weak var maxSizeBox: NSComboBox!
-    
-    private let displayField = NSTextField()
+        
+    @IBOutlet weak var textViewContainer: NSScrollView!
+    @IBOutlet var textView: NSTextView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -219,16 +220,15 @@ class ViewController: NSViewController {
             make.right.equalTo(destBtn)
         }
         
-        displayField.maximumNumberOfLines = 0
-        displayField.isEditable = false
-        displayField.isSelectable = true
-        view.addSubview(displayField)
-        displayField.snp.makeConstraints { (make) in
+        view.addSubview(textViewContainer)
+        textViewContainer.snp.makeConstraints { (make) in
             make.top.equalTo(startBtn.snp.bottom).offset(20)
             make.right.equalTo(destBtn)
             make.left.equalTo(destName)
             make.bottom.equalToSuperview().offset(-20)
         }
+        
+        textView.isEditable = false
     }
     
     @objc private func selectFolder() {
@@ -331,8 +331,8 @@ class ViewController: NSViewController {
     }
     
     private func writeFiltContents() {
-        displayField.stringValue = ""
-        displayField.stringValue = filtContents.joined(separator: "\n")
+        textView.string = ""
+        textView.string = filtContents.joined(separator: "\n")
     }
 }
 
