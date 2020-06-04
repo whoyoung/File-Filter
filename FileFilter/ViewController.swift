@@ -149,6 +149,7 @@ class ViewController: NSViewController {
             make.left.equalTo(minSizeLabel.snp.right).offset(15)
             make.right.equalTo(destBtn)
         }
+        minSizeBox.selectItem(at: 1)
         
         let maxSize = NSTextField(labelWithString: "maximum file size:")
         maxSize.backgroundColor = NSColor.clear
@@ -176,6 +177,7 @@ class ViewController: NSViewController {
             make.left.equalTo(maxSizeLabel.snp.right).offset(15)
             make.right.equalTo(destBtn)
         }
+        maxSizeBox.selectItem(at: 1)
         
         let startBtn = NSButton(title: "start", target: self, action: #selector(startFilt))
         view.addSubview(startBtn)
@@ -199,6 +201,8 @@ class ViewController: NSViewController {
         let path = destPathLabel.stringValue
         do {
             self.allContents = try fileManager.subpathsOfDirectory(atPath: path)
+            self.filtAllContents()
+            debugPrint("self.filtAllContents() = \(self.filtContents)")
         } catch let error {
             debugPrint("open \(path) error:\n \(error.localizedDescription)")
             return
@@ -207,27 +211,69 @@ class ViewController: NSViewController {
     }
     
     private func filtAllContents() {
-        self.filtContents = self.allContents.compactMap { (name) -> String in
+        self.filtContents = self.allContents.compactMap { (name) -> String? in
+            let fullPath = self.destPathLabel.stringValue + "/" + name
+            var isDirectory: ObjCBool =  ObjCBool(false)
+            if fileManager.fileExists(atPath: fullPath, isDirectory: &isDirectory) == false {
+                return nil
+            }
+            if isDirectory.boolValue == true {
+                return nil
+            }
             if specificFolderLabel.stringValue.isEmpty != true {
                 let specialFolders = (specificFolderLabel.stringValue as NSString).components(separatedBy: ",")
                 
                 let folder = specialFolders.first { (specialName) -> Bool in
-                    return name.contains(specialName)
+                    return name.contains("\(specialName)/")
                 }
-                
-                if let specialFolder = folder {
-                    let fileTypes = (fileTypeLabel.stringValue as NSString).components(separatedBy: ",")
-                    let filtType = fileTypes.first { (type) -> Bool in
-                        return specialFolder.hasSuffix(".\(type)")
+                if folder == nil {
+                    return nil
+                }
+            }
+            if fileTypeLabel.stringValue.isEmpty != true {
+                let fileTypes = (fileTypeLabel.stringValue as NSString).components(separatedBy: ",")
+                let filtType = fileTypes.first { (type) -> Bool in
+                    return name.hasSuffix(".\(type)")
+                }
+                if filtType == nil {
+                    return nil
+                }
+            }
+            
+            if minSizeLabel.stringValue.isEmpty != true || maxSizeLabel.stringValue.isEmpty != true {
+                let data = fileManager.contents(atPath: fullPath)
+                if data == nil {
+                    return nil
+                }
+                if let count = data?.count {
+                    if minSizeLabel.stringValue.isEmpty != true {
+                        var minSize = (minSizeLabel.stringValue as NSString).intValue
+                        let unitIndex = minSizeBox.indexOfSelectedItem
+                        if unitIndex == 1 {
+                            minSize *= 1024
+                        } else if unitIndex == 2 {
+                            minSize *= 1024 * 1024
+                        }
+                        if minSize > count {
+                            return nil
+                        }
                     }
                     
-                    if filtType != nil, minSizeLabel.stringValue.isEmpty != true {
-                        
+                    if maxSizeLabel.stringValue.isEmpty != true {
+                        var maxSize = (maxSizeLabel.stringValue as NSString).intValue
+                        let unitIndex = maxSizeBox.indexOfSelectedItem
+                        if unitIndex == 1 {
+                            maxSize *= 1024
+                        } else if unitIndex == 2 {
+                            maxSize *= 1024 * 1024
+                        }
+                        if maxSize < count {
+                            return nil
+                        }
                     }
                 }
-                
-                
             }
+            return fullPath
         }
     }
 }
@@ -307,16 +353,7 @@ extension ViewController: NSComboBoxDelegate, NSComboBoxDataSource {
             let strArray = (string as NSString).components(separatedBy: ",")
             typeDatas = strArray
         }
-        
-        if let string = UserDefaults.standard.object(forKey: KSizeUnitKey) as? String {
-            let strArray = (string as NSString).components(separatedBy: ",")
-            unitDatas = strArray
-        } else {
-            let string = "B,KB,M"
-            UserDefaults.standard.set(string, forKey: KSizeUnitKey)
-            let strArray = (string as NSString).components(separatedBy: ",")
-            unitDatas = strArray
-        }
+        unitDatas = ["B","KB","M"]
     }
 }
 
