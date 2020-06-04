@@ -17,18 +17,21 @@ class ViewController: NSViewController {
     
     private let destPathLabel = NSTextField()
     private let specificFolderLabel = NSTextField()
+    private let excludeFolderLabel = NSTextField()
     private let fileTypeLabel = NSTextField()
     private let minSizeLabel = NSTextField()
     private let maxSizeLabel = NSTextField()
     private let KSpecificFolderNamesKey = "specificFolderNames"
+    private let KExcludeFolderNamesKey = "excludeFolderNames"
     private let KFileTypeKey = "fileTypeKey"
-    private let KSizeUnitKey = "sizeUnitKey"
 
     private var folderDatas: [String] = []
+    private var excludeFolderDatas: [String] = []
     private var typeDatas: [String] = []
     private var unitDatas: [String] = []
     
     @IBOutlet weak var folderBox: NSComboBox!
+    @IBOutlet weak var excludeFolderBox: NSComboBox!
     @IBOutlet weak var typeBox: NSComboBox!
     @IBOutlet weak var minSizeBox: NSComboBox!
     @IBOutlet weak var maxSizeBox: NSComboBox!
@@ -95,11 +98,39 @@ class ViewController: NSViewController {
             make.right.equalTo(destBtn)
         }
         
+        let excludeFolder = NSTextField(labelWithString: "Exclude folder names:")
+        excludeFolder.backgroundColor = NSColor.clear
+        view.addSubview(excludeFolder)
+        excludeFolder.snp.makeConstraints { (make) in
+            make.top.equalTo(specificFolder.snp.bottom).offset(20)
+            make.left.height.equalTo(destName)
+        }
+        
+        excludeFolderLabel.placeholderString = "input or select exclude folder names,separated by ','"
+        excludeFolderLabel.lineBreakMode = .byTruncatingTail
+        view.addSubview(excludeFolderLabel)
+        excludeFolderLabel.snp.makeConstraints { (make) in
+            make.top.height.equalTo(excludeFolder)
+            make.left.equalTo(excludeFolder.snp.right).offset(15)
+        }
+        
+        excludeFolderBox.delegate = self
+        excludeFolderBox.dataSource = self
+        excludeFolderBox.placeholderString = "quick select"
+        view.addSubview(excludeFolderBox)
+        excludeFolderBox.snp.makeConstraints { (make) in
+            make.centerY.equalTo(excludeFolder)
+            make.height.equalTo(20)
+            make.width.equalTo(150)
+            make.left.equalTo(excludeFolderLabel.snp.right).offset(15)
+            make.right.equalTo(destBtn)
+        }
+        
         let fileType = NSTextField(labelWithString: "Specific file types:")
         fileType.backgroundColor = NSColor.clear
         view.addSubview(fileType)
         fileType.snp.makeConstraints { (make) in
-            make.top.equalTo(specificFolder.snp.bottom).offset(20)
+            make.top.equalTo(excludeFolder.snp.bottom).offset(20)
             make.left.height.equalTo(destName)
         }
         
@@ -123,7 +154,7 @@ class ViewController: NSViewController {
             make.right.equalTo(destBtn)
         }
         
-        let minSize = NSTextField(labelWithString: "minimum file size:")
+        let minSize = NSTextField(labelWithString: "Minimum file size:")
         minSize.backgroundColor = NSColor.clear
         view.addSubview(minSize)
         minSize.snp.makeConstraints { (make) in
@@ -151,7 +182,7 @@ class ViewController: NSViewController {
         }
         minSizeBox.selectItem(at: 1)
         
-        let maxSize = NSTextField(labelWithString: "maximum file size:")
+        let maxSize = NSTextField(labelWithString: "Maximum file size:")
         maxSize.backgroundColor = NSColor.clear
         view.addSubview(maxSize)
         maxSize.snp.makeConstraints { (make) in
@@ -230,10 +261,20 @@ class ViewController: NSViewController {
                     return nil
                 }
             }
+            if excludeFolderLabel.stringValue.isEmpty != true {
+                let excludeFolders = (excludeFolderLabel.stringValue as NSString).components(separatedBy: ",")
+                
+                let folder = excludeFolders.first { (exclueName) -> Bool in
+                    return name.contains("\(exclueName)/")
+                }
+                if folder != nil {
+                    return nil
+                }
+            }
             if fileTypeLabel.stringValue.isEmpty != true {
                 let fileTypes = (fileTypeLabel.stringValue as NSString).components(separatedBy: ",")
                 let filtType = fileTypes.first { (type) -> Bool in
-                    return name.hasSuffix(".\(type)")
+                    return name.hasSuffix(type)
                 }
                 if filtType == nil {
                     return nil
@@ -282,6 +323,8 @@ extension ViewController: NSComboBoxDelegate, NSComboBoxDataSource {
     func numberOfItems(in comboBox: NSComboBox) -> Int {
         if comboBox == folderBox {
             return folderDatas.count
+        } else if comboBox == excludeFolderBox {
+            return excludeFolderDatas.count
         } else if comboBox == typeBox {
             return typeDatas.count
         } else if comboBox == minSizeBox || comboBox == maxSizeBox {
@@ -293,6 +336,8 @@ extension ViewController: NSComboBoxDelegate, NSComboBoxDataSource {
     func comboBox(_ comboBox: NSComboBox, objectValueForItemAt index: Int) -> Any? {
         if comboBox == folderBox {
             return folderDatas[index]
+        }  else if comboBox == excludeFolderBox {
+            return excludeFolderDatas[index]
         } else if comboBox == typeBox {
             return typeDatas[index]
         } else if comboBox == minSizeBox || comboBox == maxSizeBox {
@@ -306,6 +351,8 @@ extension ViewController: NSComboBoxDelegate, NSComboBoxDataSource {
             var datas: [String] = []
             if obj == folderBox {
                 datas = folderDatas
+            }  else if obj == excludeFolderBox {
+                datas = excludeFolderDatas
             } else if obj == typeBox {
                 datas = typeDatas
             }
@@ -315,6 +362,9 @@ extension ViewController: NSComboBoxDelegate, NSComboBoxDataSource {
                 if obj == folderBox {
                     value = folderDatas[obj.indexOfSelectedItem]
                     label = specificFolderLabel
+                } else if obj == excludeFolderBox {
+                    value = excludeFolderDatas[obj.indexOfSelectedItem]
+                    label = excludeFolderLabel
                 } else if obj == typeBox {
                     value = typeDatas[obj.indexOfSelectedItem]
                     label = fileTypeLabel
@@ -344,11 +394,21 @@ extension ViewController: NSComboBoxDelegate, NSComboBoxDataSource {
             folderDatas = strArray
         }
         
+        if let string = UserDefaults.standard.object(forKey: KExcludeFolderNamesKey) as? String {
+            let strArray = (string as NSString).components(separatedBy: ",")
+            excludeFolderDatas = strArray
+        } else {
+            let string = ".git,xcuserdata,Target Support Files"
+            UserDefaults.standard.set(string, forKey: KExcludeFolderNamesKey)
+            let strArray = (string as NSString).components(separatedBy: ",")
+            excludeFolderDatas = strArray
+        }
+        
         if let string = UserDefaults.standard.object(forKey: KFileTypeKey) as? String {
             let strArray = (string as NSString).components(separatedBy: ",")
             typeDatas = strArray
         } else {
-            let string = "png,jpg,jpeg,zip"
+            let string = ".png,.jpg,.jpeg,.zip,.m,.mm,.h,.swift"
             UserDefaults.standard.set(string, forKey: KFileTypeKey)
             let strArray = (string as NSString).components(separatedBy: ",")
             typeDatas = strArray
@@ -357,13 +417,4 @@ extension ViewController: NSComboBoxDelegate, NSComboBoxDataSource {
     }
 }
 
-//extension ViewController: NSTextFieldDelegate {
-//    func control(_ control: NSControl, isValidObject obj: Any?) -> Bool {
-//        if let value = obj as? String {
-//            let regex = "([1-9]*.?)|(0.[0-9]+)"
-//            let predicate = NSPredicate(format: "SELF MATCHES \(regex)", argumentArray:nil)
-//            return predicate.evaluate(with: value)
-//        }
-//        return false
-//    }
-//}
+
