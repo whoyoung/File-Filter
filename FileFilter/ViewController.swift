@@ -11,6 +11,10 @@ import SnapKit
 
 class ViewController: NSViewController {
     
+    private var allContents: [String] = []
+    private var filtContents: [String] = []
+    private let fileManager = FileManager.default
+    
     private let destPathLabel = NSTextField()
     private let specificFolderLabel = NSTextField()
     private let fileTypeLabel = NSTextField()
@@ -28,6 +32,7 @@ class ViewController: NSViewController {
     @IBOutlet weak var typeBox: NSComboBox!
     @IBOutlet weak var minSizeBox: NSComboBox!
     @IBOutlet weak var maxSizeBox: NSComboBox!
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -192,12 +197,37 @@ class ViewController: NSViewController {
     
     @objc private func startFilt() {
         let path = destPathLabel.stringValue
-        let fileM = FileManager.default
         do {
-            let files:[String] = try fileM.contentsOfDirectory(atPath: path)
-            debugPrint("\(files.joined(separator: ", "))")
+            self.allContents = try fileManager.subpathsOfDirectory(atPath: path)
         } catch let error {
             debugPrint("open \(path) error:\n \(error.localizedDescription)")
+            return
+        }
+        
+    }
+    
+    private func filtAllContents() {
+        self.filtContents = self.allContents.compactMap { (name) -> String in
+            if specificFolderLabel.stringValue.isEmpty != true {
+                let specialFolders = (specificFolderLabel.stringValue as NSString).components(separatedBy: ",")
+                
+                let folder = specialFolders.first { (specialName) -> Bool in
+                    return name.contains(specialName)
+                }
+                
+                if let specialFolder = folder {
+                    let fileTypes = (fileTypeLabel.stringValue as NSString).components(separatedBy: ",")
+                    let filtType = fileTypes.first { (type) -> Bool in
+                        return specialFolder.hasSuffix(".\(type)")
+                    }
+                    
+                    if filtType != nil, minSizeLabel.stringValue.isEmpty != true {
+                        
+                    }
+                }
+                
+                
+            }
         }
     }
 }
