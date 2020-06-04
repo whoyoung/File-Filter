@@ -36,6 +36,7 @@ class ViewController: NSViewController {
     @IBOutlet weak var minSizeBox: NSComboBox!
     @IBOutlet weak var maxSizeBox: NSComboBox!
     
+    private let displayField = NSTextField()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -215,7 +216,18 @@ class ViewController: NSViewController {
         startBtn.snp.makeConstraints { (make) in
             make.top.equalTo(maxSizeBox.snp.bottom).offset(20)
             make.height.width.equalTo(destBtn)
-            make.right.equalTo(-20)
+            make.right.equalTo(destBtn)
+        }
+        
+        displayField.maximumNumberOfLines = 0
+        displayField.isEditable = false
+        displayField.isSelectable = true
+        view.addSubview(displayField)
+        displayField.snp.makeConstraints { (make) in
+            make.top.equalTo(startBtn.snp.bottom).offset(20)
+            make.right.equalTo(destBtn)
+            make.left.equalTo(destName)
+            make.bottom.equalToSuperview().offset(-20)
         }
     }
     
@@ -233,7 +245,7 @@ class ViewController: NSViewController {
         do {
             self.allContents = try fileManager.subpathsOfDirectory(atPath: path)
             self.filtAllContents()
-            debugPrint("self.filtAllContents() = \(self.filtContents)")
+            self.writeFiltContents()
         } catch let error {
             debugPrint("open \(path) error:\n \(error.localizedDescription)")
             return
@@ -316,6 +328,11 @@ class ViewController: NSViewController {
             }
             return fullPath
         }
+    }
+    
+    private func writeFiltContents() {
+        displayField.stringValue = ""
+        displayField.stringValue = filtContents.joined(separator: "\n")
     }
 }
 
