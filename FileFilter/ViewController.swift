@@ -252,6 +252,7 @@ class ViewController: NSViewController {
             self.allContents = try fileManager.subpathsOfDirectory(atPath: path)
             self.filtAllContents()
             self.writeFiltContents()
+            self.saveSelection()
         } catch let error {
             debugPrint("open \(path) error:\n \(error.localizedDescription)")
             return
@@ -339,7 +340,59 @@ class ViewController: NSViewController {
     
     private func writeFiltContents() {
         textView.string = ""
-        textView.string = filtContents.joined(separator: "\n")
+        if filtContents.isEmpty == true {
+            textView.string = "No eligible files were found"
+        } else {
+            textView.string = filtContents.joined(separator: "\n")
+        }
+    }
+    
+    private func saveSelection() {
+        if specificFolderLabel.stringValue.isEmpty != true {
+            let specialFolders = (specificFolderLabel.stringValue as NSString).components(separatedBy: ",")
+            
+            let folders = specialFolders.compactMap { (specialName) -> String? in
+                if folderDatas.contains("\(specialName)") == true {
+                    return nil
+                }
+                return specialName
+            }
+            if folders.isEmpty == false {
+                folderDatas.insert(contentsOf: folders, at: 0)
+                UserDefaults.standard.set(folderDatas.joined(separator: ","), forKey: KSpecificFolderNamesKey)
+                folderBox.reloadData()
+            }
+        }
+        if excludeFolderLabel.stringValue.isEmpty != true {
+            let excludeFolders = (excludeFolderLabel.stringValue as NSString).components(separatedBy: ",")
+            
+            let folders = excludeFolders.compactMap { (exclueName) -> String? in
+                if excludeFolderDatas.contains("\(exclueName)") == true {
+                    return nil
+                }
+                return exclueName
+            }
+            if folders.isEmpty == false {
+                excludeFolderDatas.insert(contentsOf: folders, at: 0)
+                UserDefaults.standard.set(excludeFolderDatas.joined(separator: ","), forKey: KExcludeFolderNamesKey)
+                excludeFolderBox.reloadData()
+            }
+        }
+        if fileTypeLabel.stringValue.isEmpty != true {
+            let typeFolders = (fileTypeLabel.stringValue as NSString).components(separatedBy: ",")
+            
+            let types = typeFolders.compactMap { (type) -> String? in
+                if typeDatas.contains("\(type)") == true {
+                    return nil
+                }
+                return type
+            }
+            if types.isEmpty == false {
+                typeDatas.insert(contentsOf: types, at: 0)
+                UserDefaults.standard.set(typeDatas.joined(separator: ","), forKey: KFileTypeKey)
+                typeBox.reloadData()
+            }
+        }
     }
 }
 
