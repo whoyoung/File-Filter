@@ -242,6 +242,12 @@ class ViewController: NSViewController {
     
     @objc private func startFilt() {
         let path = destPathLabel.stringValue
+        if path.isEmpty == true {
+            let alert = NSAlert()
+            alert.messageText = "destination folder can't be empty"
+            alert.runModal()
+            return
+        }
         do {
             self.allContents = try fileManager.subpathsOfDirectory(atPath: path)
             self.filtAllContents()
@@ -250,6 +256,7 @@ class ViewController: NSViewController {
             debugPrint("open \(path) error:\n \(error.localizedDescription)")
             return
         }
+        
         
     }
     
